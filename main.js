@@ -1,118 +1,96 @@
-"use strict"
-
-/*
-
-
-
-function calc(operator, a, b){
-const operations = {  'plus': a + b,
-                      'minus': a - b,
-                      'mult': a * b, 
-                      'del': (b===0) ? 'you cannot use zero' : a / b,
-                      'exp': a ** b,
-                      'rem': a % b}
- const checkcalc = (typeof a != 'number' || typeof b != 'number' || !operator);
- let result;
- a=+a;
- b=+b;
-
- if(checkcalc){
-     result = 'error';
- }else if(operator in operations){
-     result = operations[operator];
- }else{
-     result = 'unknown operation';
- }
-    console.log(result);
-}
-calc('del', 2, 'f' );
-*/
+const STATUSES = ['To Do',
+                  'In Progress',
+                  'Done'
+];
 
 
-const toDo = 'To Do';
-const done = 'Done';
-const inProgress = 'In Progress';
+const PRIORITIES = ['high',
+                    'middle',
+                    'low'
+];
 
 
-const list = {
-    'make a bed': toDo,
-    'play a footbal': inProgress,
-    'play a guitar': done,
-    'dream':done,
-    'see the opera': inProgress,
+let list = [];
+
+function addTask(taskName) {
+
+    let maxId = list[list.length-1];
+
+    if(maxId === undefined){
+        maxId = 1;
+    }else{
+        maxId = list[list.length-1].id+1;
+    };
+
+    let obj = {id:maxId, name:taskName, priority:PRIORITIES[0], status:STATUSES[0]};
+    list.push(obj);
 }
 
-function channgeStatus(key, feat) {
-    if(!(key in list)) return console.log('error');
-   
-    list[key]=feat;
+function deletTask(taskId) {
+
+    let foundObjIndex = list.findIndex(item => item.id === taskId);
+    list.splice(foundObjIndex,1);
 }
 
+function changeStatus(taskId,newStatus) {
 
-function addTask(feat) {
+    let foundObj = list.find(item => item.id === taskId);
+    foundObj.status = newStatus;
 
-    list[feat] = toDo;
-    
+    if(newStatus===STATUSES[0]) foundObj.priority = PRIORITIES[0];
+    if(newStatus===STATUSES[1]) foundObj.priority = PRIORITIES[1];
+    if(newStatus===STATUSES[2]) foundObj.priority = PRIORITIES[2];
 }
 
+function showByStatus(checkStatus) {
 
+  console.log(checkStatus);
 
-function deleteTask(feat){
-    
-    if(!(feat in list)) return console.log('error');
-    delete  list[feat];
+  let count = 0;
+
+  for(let i = 0; i<list.length; i++){
+      if(list[i].status === checkStatus){
+          console.log('     '+list[i].name);
+          count++;
+      }
+  }
+  if(!count) console.log('     -');
 }
 
+function showByPriority(checkPriority) {
 
-
-function showList(){
-
-    let  countToDo = 0;
-    let  countDone = 0;
-    let  countInProgress = 0;
-
-
-    console.log(toDo + ":");
-    for(let key in list){
-        if(list[key] === toDo){
-            console.log("   "+key);
-            countToDo++;
-        }
-        
-    }
-    if(!countToDo) console.log('   -');
-
-
-    console.log(inProgress + ":")
-    for(let key in list){
-        if(list[key] === inProgress) {
-            console.log("   "+key);
-             countInProgress++;
-        }
-        
-    }
-    if(!countInProgress) console.log('   -');
-
-
-    console.log(done + ':')
-    for(let key in list){
-        if(list[key] === done){
-            console.log(`   ${key}`) ;
-            countDone++;
+    console.log(checkPriority);
+  
+    let count = 0;
+  
+    for(let i = 0; i<list.length; i++){
+        if(list[i].priority === checkPriority){
+            console.log('     '+list[i].name);
+            count++;
         }
     }
-    if(!countDone)  console.log('   -');
-}
+    if(!count) console.log('     -');
+  }
+
+  function showList() {
+      
+      showByStatus(STATUSES[0]);
+
+      
+      showByStatus(STATUSES[1]);
+
+ 
+      showByStatus(STATUSES[2]);
+  }
+
+addTask('drink a beer');
+addTask('fuck a cunt');
+addTask('sleep in the bed')
+deletTask(2);
+addTask('bear the nightshift');
+changeStatus(3,'In Progress');
 
 
-
-
-
-addTask('play a game');
-deleteTask('dream');
-channgeStatus('play a guitar', inProgress);
-channgeStatus('make a bed', inProgress);
-channgeStatus('play a game', inProgress);
 showList();
 
 
